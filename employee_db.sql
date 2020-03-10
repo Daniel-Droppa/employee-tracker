@@ -21,6 +21,7 @@ first_name VARCHAR(30) NOT NULL,
 last_name VARCHAR(30) NOT NULL,
 roles_id INT NOT NULL,
 CONSTRAINT fk_roles FOREIGN KEY (roles_id) REFERENCES roles(id),
+-- manager VARCHAR(30),
 manager_id INT, 
 CONSTRAINT fk_manager FOREIGN KEY (manager_id) REFERENCES employee(id)
 );

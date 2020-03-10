@@ -50,6 +50,7 @@ function init() {
                 "View all departments",
                 "View all roles",
                 "Add an employee",
+                "Remove an employee",
                 "Add department",
                 "Add a role",
                 "Delete employee",
@@ -70,6 +71,9 @@ function init() {
                 case "Add an employee":
                     addEmployee();
                     break;
+                case "Remove an employee":
+                    removeEmployee();
+                    break;
                 case "Add department":
                     addDepartment();
                     break;
@@ -85,8 +89,7 @@ function init() {
                 case "EXIT":
                     connection.end();
                     break;
-                default:
-                    break;
+                
             }
         })
 }
@@ -147,7 +150,11 @@ function addEmployee() {
                     },
                     message: "What is this employee's role? "
                 },
-                
+                // {
+                //     name: "manager",
+                //     type: "input",
+                //     message: "Who is the employee's manager?"
+                // },
 
             ]).then(function (answer) {
                 let rolesID;
@@ -163,6 +170,7 @@ function addEmployee() {
                         first_name: answer.first_name,
                         last_name: answer.last_name,
                         roles_id: rolesID,
+                        // manager: answer.manager,
                     },
                     function (err) {
                         if (err) throw err;
@@ -172,6 +180,38 @@ function addEmployee() {
                 )
             })
     })
+}
+function removeEmployee() {
+
+    connection.query(
+        "SELECT * FROM employee",
+        function (err, res) {
+            if (err) {
+                throw err;
+            }
+            inquirer.prompt(
+                {
+                    name: "employeeName",
+                    type: "list",
+                    choices: function () {
+                        var employeeArray = [];
+                        for (let i = 0; i < res.length; i++) {
+                            employeeArray.push(res[i].first_name + " " + res[i].last_name);
+                                                }
+                        return employeeArray;
+                    },
+                    message: "Which employee do you want to remove? "
+                }).then(function(answer){
+                    connection.query(
+                        "DELETE FROM employees WHERE ?",
+                        { first_name: answer.first_name },
+                        
+                        console.log(`\n ${answer.first_name} has been removed from database. \n`),
+                        
+                    init()
+                    );
+                })
+        })
 }
 function addDepartment() {
     inquirer
